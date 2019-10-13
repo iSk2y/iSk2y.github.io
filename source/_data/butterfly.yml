@@ -99,7 +99,7 @@ katex:
 
 ####   Analysis    ####
 # ---------------
-# baidu_analytics: 
+baidu_analytics: 0fb1cb2a24f6b7ac6f5a73645d242af4
 
 #Google Analytics
 google_analytics:
@@ -131,31 +131,31 @@ cdn:
 # Post info settings
 # ---------------
 # avatar: /img/avatar.png
-avatar: https://avatars1.githubusercontent.com/u/44657334?s=460&v=4
+avatar: http://isk2y.github.io/img/avatar.png
 
 # the banner image of index
 # if the banner of another page not setting,it will show the top_img
 # 主页顶部图
-top_img: https://cdn.jsdelivr.net/gh/jerryc127/CDN/img/top_img_index.jpg
-
+#top_img: https://cdn.jsdelivr.net/gh/jerryc127/CDN/img/top_img_index.jpg
+top_img: https://cdn.jsdelivr.net/gh/iSk2y/CDN/blog/img/top_img_index.jpg
 #the banner image of post
 # if the post not set the post cover and post top image, it will show it
 # post页默认 顶部图 (post若设置则覆盖)
-post_img: https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/Photo/post.png
-
+#post_img: https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/Photo/post.png
+post_img: https://cdn.jsdelivr.net/gh/iSk2y/CDN/blog/img/post.png
 # the default cover of the post
 # 文章默认cover图(post中若设置则覆盖)
-default_cover: https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/cover/default_bg.png
+default_cover: https://cdn.jsdelivr.net/gh/iSk2y/CDN/blog/img/default_bg.png
 
 # the banner image of archive page
 # archives页 顶部图
-archive_img: https://cdn.jsdelivr.net/gh/jerryc127/CDN@latest/Photo/archive.jpg
+archive_img: https://cdn.jsdelivr.net/gh/iSk2y/CDN/blog/img/archive.jpg
 
 # the banner image of tag page
-tag_img: https://cdn.jsdelivr.net/gh/jerryc127/CDN/img/tag-bg.png
+tag_img: https://cdn.jsdelivr.net/gh/iSk2y/CDN/blog/img/tag.jpg
 
 # the banner image of category page
-category_img: https://cdn.jsdelivr.net/gh/jerryc127/CDN/img/category-bg
+category_img: https://cdn.jsdelivr.net/gh/iSk2y/CDN/blog/img/category-bg.png
 
 # if the photo link cannot connect,it will show that
 lodding_bg:
@@ -296,11 +296,11 @@ qihu_site_verification:
 Flink:
   headline: 友情鏈接
   info_headline: 我的Blog資料
-  name: Blog 名字： JerryC
-  address: Blog 地址： https://jerryc.me/
-  avatar: Blog 頭像： https://jerryc.me/img/avatar.png
-  info: Blog 簡介： 今日事,今日畢
-  comment: 如果需要交換友鏈,請留言
+  name: Blog 名字： iSk2y
+  address: Blog 地址： http://isk2y.github.io/
+  avatar: Blog 头像： http://isk2y.github.io/img/avatar.png
+  info: Blog 简介： 喜欢信息安全、Hacker精神的逗比患者，学习交流分享拙见，欢迎来电~
+  comment: 如果需要交换友链，请联系我~
 
 # 打賞按鈕
 reward:

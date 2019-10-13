@@ -1,0 +1,10 @@
+class:
+  class_name: 友情鏈接
+  link_list:
+    1:
+      name: virus-v
+      link: http://virus-v.github.io
+      avatar: https://virus-v.github.io/images/avatar.jpg
+      descr: "一位牛逼的嵌入式大佬"
+
+
