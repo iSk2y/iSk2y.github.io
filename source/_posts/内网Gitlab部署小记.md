@@ -83,15 +83,15 @@ sudo EXTERNAL_URL="https://gitlab.example.com" yum install -y gitlab-ee
 
 修改`https://gitlab.example.com`为自己本地的域名或者IP，此处我选择ip（如果要在线上访问，可以配置你的子域名，并设置解析）
 
-![1571546466615](https://cdn.jsdelivr.net/gh/iSk2y/CDN/blog/post/gitlab-deploy-note/1571546466615.png)
+![安装完成](https://cdn.jsdelivr.net/gh/iSk2y/CDN/blog/post/gitlab-deploy-note/1571546466615.png)
 
 安装成功。在`http://192.168.11.2/`web页面成功显示
 
-![1571546966522](https://cdn.jsdelivr.net/gh/iSk2y/CDN/blog/post/gitlab-deploy-note/1571546966522.png)
+![初次访问页面](https://cdn.jsdelivr.net/gh/iSk2y/CDN/blog/post/gitlab-deploy-note/1571546966522.png)
 
 默认第一次访问会重定向到设置密码页面。
 
-![1571547939027](https://cdn.jsdelivr.net/gh/iSk2y/CDN/blog/post/gitlab-deploy-note/1571547939027.png)
+![登录后主页](https://cdn.jsdelivr.net/gh/iSk2y/CDN/blog/post/gitlab-deploy-note/1571547939027.png)
 
 
 
@@ -240,7 +240,7 @@ gitlab-rails console
 Notify.test_email('收件人邮箱', '邮件标题', '邮件正文').deliver_now
 ```
 
-![1571554772434](https://cdn.jsdelivr.net/gh/iSk2y/CDN/blog/post/gitlab-deploy-note/1571554772434.png)
+![测试发信成功](https://cdn.jsdelivr.net/gh/iSk2y/CDN/blog/post/gitlab-deploy-note/1571554772434.png)
 
 
 
