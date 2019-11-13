@@ -1,0 +1,236 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.8.0"><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><title>一次内网Gitlab部署小记 | iSk2y's Note</title><meta name="description" content="公司内网环境中，一次部署Gitlab企业版/社区版note"><meta name="keywords" content="Git,运维"><meta name="author" content="iSk2y"><meta name="copyright" content="iSk2y"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/img/favicon.ico"><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><meta http-equiv="x-dns-prefetch-control" content="on"><link rel="canonical" href="http://isk2y.github.io/2019/10/20/内网Gitlab部署小记/"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="一次内网Gitlab部署小记"><meta name="twitter:description" content="公司内网环境中，一次部署Gitlab企业版/社区版note"><meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/iSk2y/CDN/blog/post/gitlab-deploy-note/gitlab_cover.png"><meta property="og:type" content="article"><meta property="og:title" content="一次内网Gitlab部署小记"><meta property="og:url" content="http://isk2y.github.io/2019/10/20/内网Gitlab部署小记/"><meta property="og:site_name" content="iSk2y's Note"><meta property="og:description" content="公司内网环境中，一次部署Gitlab企业版/社区版note"><meta property="og:image" content="https://cdn.jsdelivr.net/gh/iSk2y/CDN/blog/post/gitlab-deploy-note/gitlab_cover.png"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="next" title="申请Let's encrypt的SSL证书" href="http://isk2y.github.io/2019/05/13/letsencrypt-application-renew/"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.js"></script><script src="https://cdn.jsdelivr.net/npm/blueimp-md5@2.10.0/js/md5.min.js"></script><link rel="dns-prefetch" href="https://hm.baidu.com"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?0e34c7227d935e8ca4e5a98cf3bd8629";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":1,"translateDelay":0,"cookieDomain":"https://isk2y.github.io/","msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简"},
+  highlight_copy: 'true',
+  highlight_lang: 'true',
+  highlight_shrink: 'false',
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  bookmark: {
+    title: '添加书签',
+    message_prev: '按',
+    message_next: '键将本页加入书签'
+  },
+  runtime_unit: '天',
+  copyright: {"languages":{"author":"作者: iSk2y","link":"链接: http://isk2y.github.io/2019/10/20/内网Gitlab部署小记/","source":"来源: iSk2y's Note","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  copy_copyright_js: true
+  
+}</script></head><body><div id="header"> <div id="page-header"><span class="pull-left" id="blog_name"><a class="blog_title" id="site-name" href="/">iSk2y's Note</a></span><i class="fa fa-bars fa-fw toggle-menu pull-right close" aria-hidden="true"></i><span class="pull-right menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> About</span></a></div><div class="menus_item"><a class="site-page"><i class="fa-fw fa fa-list" aria-hidden="true"></i><span> List</span><i class="fa fa-chevron-down menus-expand" aria-hidden="true"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/book/"><i class="fa-fw fa fa-book"></i><span> Book</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fa fa-film"></i><span> Movie</span></a></li></ul></div><script>document.body.addEventListener('touchstart', function(){ });</script></div></span><span class="pull-right" id="search_button"></span></div></div><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="lozad avatar_img" src="http://isk2y.github.io/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'"></div><div class="mobile_post_data"><div class="mobile_data_item is_center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">17</div></a></div></div><div class="mobile_data_item is_center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">16</div></a></div></div><div class="mobile_data_item is_center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">分类</div><div class="length_num">8</div></a></div></div></div><hr><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> About</span></a></div><div class="menus_item"><a class="site-page"><i class="fa-fw fa fa-list" aria-hidden="true"></i><span> List</span><i class="fa fa-chevron-down menus-expand" aria-hidden="true"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/book/"><i class="fa-fw fa fa-book"></i><span> Book</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fa fa-film"></i><span> Movie</span></a></li></ul></div><script>document.body.addEventListener('touchstart', function(){ });</script></div></div><div id="mobile-sidebar-toc"><div class="toc_mobile_headline">目录</div><ol class="toc_mobile_items"><li class="toc_mobile_items-item toc_mobile_items-level-1"><a class="toc_mobile_items-link" href="#准备"><span class="toc_mobile_items-number">1.</span> <span class="toc_mobile_items-text">准备</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#环境"><span class="toc_mobile_items-number">1.1.</span> <span class="toc_mobile_items-text">环境</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-1"><a class="toc_mobile_items-link" href="#安装"><span class="toc_mobile_items-number">2.</span> <span class="toc_mobile_items-text">安装</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#安装配置依赖"><span class="toc_mobile_items-number">2.1.</span> <span class="toc_mobile_items-text">安装配置依赖</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#配置防火墙HTTP-amp-HTTPS"><span class="toc_mobile_items-number">2.1.1.</span> <span class="toc_mobile_items-text">配置防火墙HTTP&amp;HTTPS</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#Postfix-（选择其他可以不装）"><span class="toc_mobile_items-number">2.1.2.</span> <span class="toc_mobile_items-text">Postfix （选择其他可以不装）</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#开始安装"><span class="toc_mobile_items-number">2.2.</span> <span class="toc_mobile_items-text">开始安装</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-1"><a class="toc_mobile_items-link" href="#常用配置"><span class="toc_mobile_items-number">3.</span> <span class="toc_mobile_items-text">常用配置</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#external-URL-外部访问地址"><span class="toc_mobile_items-number">3.1.</span> <span class="toc_mobile_items-text">external URL 外部访问地址</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#邮件配置"><span class="toc_mobile_items-number">3.2.</span> <span class="toc_mobile_items-text">邮件配置</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#postfix"><span class="toc_mobile_items-number">3.2.1.</span> <span class="toc_mobile_items-text">postfix</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#Aliyun个人版"><span class="toc_mobile_items-number">3.2.2.</span> <span class="toc_mobile_items-text">Aliyun个人版</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#禁用创建组权限"><span class="toc_mobile_items-number">3.3.</span> <span class="toc_mobile_items-text">禁用创建组权限</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-1"><a class="toc_mobile_items-link" href="#常用命令"><span class="toc_mobile_items-number">4.</span> <span class="toc_mobile_items-text">常用命令</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#Service-Management-Commands"><span class="toc_mobile_items-number">4.1.</span> <span class="toc_mobile_items-text">Service Management Commands</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#General-Commands"><span class="toc_mobile_items-number">4.2.</span> <span class="toc_mobile_items-text">General Commands</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#DatabaseCommands"><span class="toc_mobile_items-number">4.3.</span> <span class="toc_mobile_items-text">DatabaseCommands</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-1"><a class="toc_mobile_items-link" href="#过程中的问题"><span class="toc_mobile_items-number">5.</span> <span class="toc_mobile_items-text">过程中的问题</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#关于firewall"><span class="toc_mobile_items-number">5.1.</span> <span class="toc_mobile_items-text">关于firewall</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#发信失败"><span class="toc_mobile_items-number">5.2.</span> <span class="toc_mobile_items-text">发信失败</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#文档-amp-参考"><span class="toc_mobile_items-number">5.3.</span> <span class="toc_mobile_items-text">文档&amp;参考</span></a></li></ol></li></ol></div></div><div id="body-wrap"><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true">     </i><div class="auto_open" id="sidebar"><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#准备"><span class="toc-number">1.</span> <span class="toc-text">准备</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#环境"><span class="toc-number">1.1.</span> <span class="toc-text">环境</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#安装"><span class="toc-number">2.</span> <span class="toc-text">安装</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#安装配置依赖"><span class="toc-number">2.1.</span> <span class="toc-text">安装配置依赖</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#配置防火墙HTTP-amp-HTTPS"><span class="toc-number">2.1.1.</span> <span class="toc-text">配置防火墙HTTP&amp;HTTPS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Postfix-（选择其他可以不装）"><span class="toc-number">2.1.2.</span> <span class="toc-text">Postfix （选择其他可以不装）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#开始安装"><span class="toc-number">2.2.</span> <span class="toc-text">开始安装</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#常用配置"><span class="toc-number">3.</span> <span class="toc-text">常用配置</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#external-URL-外部访问地址"><span class="toc-number">3.1.</span> <span class="toc-text">external URL 外部访问地址</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#邮件配置"><span class="toc-number">3.2.</span> <span class="toc-text">邮件配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#postfix"><span class="toc-number">3.2.1.</span> <span class="toc-text">postfix</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Aliyun个人版"><span class="toc-number">3.2.2.</span> <span class="toc-text">Aliyun个人版</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#禁用创建组权限"><span class="toc-number">3.3.</span> <span class="toc-text">禁用创建组权限</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#常用命令"><span class="toc-number">4.</span> <span class="toc-text">常用命令</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Service-Management-Commands"><span class="toc-number">4.1.</span> <span class="toc-text">Service Management Commands</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#General-Commands"><span class="toc-number">4.2.</span> <span class="toc-text">General Commands</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DatabaseCommands"><span class="toc-number">4.3.</span> <span class="toc-text">DatabaseCommands</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#过程中的问题"><span class="toc-number">5.</span> <span class="toc-text">过程中的问题</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#关于firewall"><span class="toc-number">5.1.</span> <span class="toc-text">关于firewall</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#发信失败"><span class="toc-number">5.2.</span> <span class="toc-text">发信失败</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#文档-amp-参考"><span class="toc-number">5.3.</span> <span class="toc-text">文档&amp;参考</span></a></li></ol></li></ol></div></div></div><div id="content-outer"><div id="top-container" style="background-image: url(https://cdn.jsdelivr.net/gh/iSk2y/CDN/blog/post/gitlab-deploy-note/gitlab_top_img.png)"><div id="post-info"><div id="post-title"><div class="posttitle">一次内网Gitlab部署小记</div></div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 发表于 2019-10-20<span class="post-meta__separator">|</span><i class="fa fa-history" aria-hidden="true"></i> 更新于 2019-11-14</time><span class="post-meta__separator mobile_hidden">|</span><span class="mobile_hidden"><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/运维/">运维</a></span><div class="post-meta-wordcount"><span>阅读量: </span><span id="busuanzi_value_page_pv"></span></div></div></div></div><div class="layout layout_post" id="content-inner">   <article id="post"><div class="article-container" id="post-content"><h1 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h1><h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><ul>
+<li>OS：<strong>CentOS 7.2</strong> Linux version 3.10.0-327.4.5.el7.x86_64 (<a href="mailto:builder@kbuilder.dev.centos.org" target="_blank" rel="noopener">builder@kbuilder.dev.centos.org</a>) (gcc version 4.8.3 20140911 (Red Hat 4.8.3-9) (GCC) ) #1 SMP Mon Jan 25 22:07:14 UTC 2016</li>
+<li>配置：2核4g</li>
+<li>gitlab version：GitLab 12.3.5-ee</li>
+</ul>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><h2 id="安装配置依赖"><a href="#安装配置依赖" class="headerlink" title="安装配置依赖"></a>安装配置依赖</h2><h3 id="配置防火墙HTTP-amp-HTTPS"><a href="#配置防火墙HTTP-amp-HTTPS" class="headerlink" title="配置防火墙HTTP&amp;HTTPS"></a>配置防火墙HTTP&amp;HTTPS</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y curl policycoreutils-python openssh-server</span><br><span class="line">sudo systemctl <span class="built_in">enable</span> sshd</span><br><span class="line">sudo systemctl start sshd</span><br><span class="line">sudo firewall-cmd --permanent --add-service=http</span><br><span class="line">sudo firewall-cmd --permanent --add-service=https</span><br><span class="line">sudo systemctl reload firewalld</span><br></pre></td></tr></table></figure>
+<p>这里根据想要配置的不同端口 灵活更改，因为我服务器并无其他web端口，所以这里默认还是使用80</p>
+<blockquote>
+<p><strong>PS</strong>：如果firewall-cmd命令无法找到，请浏览这个<a href="https://www.tecmint.com/fix-firewall-cmd-command-not-found-error/" target="_blank" rel="noopener">文章</a>解决</p>
+</blockquote>
+<h3 id="Postfix-（选择其他可以不装）"><a href="#Postfix-（选择其他可以不装）" class="headerlink" title="Postfix （选择其他可以不装）"></a>Postfix （选择其他可以不装）</h3><p> install Postfix to send notification emails 安装Postfix 发送邮件消息通知，如果选用其他发送邮箱方式可以忽略。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install postfix</span><br><span class="line">sudo systemctl <span class="built_in">enable</span> postfix</span><br><span class="line">sudo systemctl start postfix</span><br></pre></td></tr></table></figure>
+<h2 id="开始安装"><a href="#开始安装" class="headerlink" title="开始安装"></a>开始安装</h2><p>这里官网中推荐安装ee也就是企业版本，因为如果没有订阅ee的 license ，默认和社区版功能相同，而如果想试用或者使用可以随时用企业版的功能。所以那就安装  Enterprise Edition 吧。<a href="https://about.gitlab.com/install/ce-or-ee/?distro=centos-7" target="_blank" rel="noopener">说明在此</a></p>
+<ol>
+<li><strong>添加仓库</strong></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ee/script.rpm.sh | sudo bash</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li><strong>设置URL并安装</strong></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo EXTERNAL_URL=<span class="string">"https://gitlab.example.com"</span> yum install -y gitlab-ee</span><br></pre></td></tr></table></figure>
+<p>修改<code>https://gitlab.example.com</code>为自己本地的域名或者IP，此处我选择ip（如果要在线上访问，可以配置你的子域名，并设置解析）</p>
+<p><img alt="安装完成" data-src="https://cdn.jsdelivr.net/gh/iSk2y/CDN/blog/post/gitlab-deploy-note/1571546466615.png" class="lozad"></p>
+<p>安装成功。在<code>http://192.168.11.2/</code>web页面成功显示</p>
+<p><img alt="初次访问页面" data-src="https://cdn.jsdelivr.net/gh/iSk2y/CDN/blog/post/gitlab-deploy-note/1571546966522.png" class="lozad"></p>
+<p>默认第一次访问会重定向到设置密码页面。</p>
+<p><img alt="登录后主页" data-src="https://cdn.jsdelivr.net/gh/iSk2y/CDN/blog/post/gitlab-deploy-note/1571547939027.png" class="lozad"></p>
+<h1 id="常用配置"><a href="#常用配置" class="headerlink" title="常用配置"></a>常用配置</h1><p>问题文档： <a href="https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/README.md" target="_blank" rel="noopener">https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/README.md</a> </p>
+<p>官方配置文档： <a href="https://docs.gitlab.com/omnibus/settings/configuration.html" target="_blank" rel="noopener">https://docs.gitlab.com/omnibus/settings/configuration.html</a> </p>
+<p><strong>注意！！！：</strong>每次修改完配置要重载下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo gitlab-ctl reconfigure</span><br></pre></td></tr></table></figure>
+<p>配置文件路径：<code>/etc/gitlab/gitlab.rb</code></p>
+<p>(我这里就不完整贴出配置文件了，可长了…)</p>
+<h2 id="external-URL-外部访问地址"><a href="#external-URL-外部访问地址" class="headerlink" title="external URL 外部访问地址"></a>external URL 外部访问地址</h2><p>通俗点就是访问的URL。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">##! For more details on configuring external_url see:</span><br><span class="line">external_url &apos;http://192.168.11.2&apos;</span><br><span class="line"># registry_external_url &apos;https://registry.example.com&apos;</span><br><span class="line"># pages_external_url &quot;http://pages.example.com/&quot;</span><br><span class="line"># gitlab_pages[&apos;artifacts_server_url&apos;] = nil # Defaults to external_url + &apos;/api/v4&apos;</span><br><span class="line"># gitlab_pages[&apos;auth_redirect_uri&apos;] = nil # Defaults to projects subdomain of pages_external_url and + &apos;/auth&apos;</span><br><span class="line"># gitlab_pages[&apos;gitlab_server&apos;] = nil # Defaults to external_url</span><br><span class="line"># mattermost_external_url &apos;http://mattermost.example.com&apos;</span><br><span class="line"># For example, if external_url is the same for two secondaries, you must specify</span><br><span class="line"># If it is blank, it defaults to external_url.</span><br><span class="line"></span><br><span class="line"># 外部访问地址</span><br><span class="line">external_url &apos;http://192.168.11.2&apos;</span><br></pre></td></tr></table></figure>
+<p>还有个<strong>relative URL 相对URL</strong>，从配置文档中了解到，这个配置可以设置为gitlab为目录访问，<a href="https://docs.gitlab.com/omnibus/settings/configuration.html#configuring-a-relative-url-for-gitlab" target="_blank" rel="noopener">具体查看</a></p>
+<h2 id="邮件配置"><a href="#邮件配置" class="headerlink" title="邮件配置"></a>邮件配置</h2><p>最后我没有选择postfix，而且采用了aliyun邮箱发信</p>
+<p>官方配置文档： <a href="https://docs.gitlab.com/omnibus/settings/smtp.html" target="_blank" rel="noopener">https://docs.gitlab.com/omnibus/settings/smtp.html</a> </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"># 默认模板</span><br><span class="line">### GitLab email server settings</span><br><span class="line">###! Docs: https://docs.gitlab.com/omnibus/settings/smtp.html</span><br><span class="line">###! **Use smtp instead of sendmail/postfix.**</span><br><span class="line"></span><br><span class="line"># gitlab_rails[&apos;smtp_enable&apos;] = true</span><br><span class="line"># gitlab_rails[&apos;smtp_address&apos;] = &quot;smtp.server&quot;</span><br><span class="line"># gitlab_rails[&apos;smtp_port&apos;] = 465</span><br><span class="line"># gitlab_rails[&apos;smtp_user_name&apos;] = &quot;smtp user&quot;</span><br><span class="line"># gitlab_rails[&apos;smtp_password&apos;] = &quot;smtp password&quot;</span><br><span class="line"># gitlab_rails[&apos;smtp_domain&apos;] = &quot;example.com&quot;</span><br><span class="line"># gitlab_rails[&apos;smtp_authentication&apos;] = &quot;login&quot;</span><br><span class="line"># gitlab_rails[&apos;smtp_enable_starttls_auto&apos;] = true</span><br><span class="line"># gitlab_rails[&apos;smtp_tls&apos;] = false</span><br><span class="line"></span><br><span class="line">###! **Can be: &apos;none&apos;, &apos;peer&apos;, &apos;client_once&apos;, &apos;fail_if_no_peer_cert&apos;**</span><br><span class="line">###! Docs: http://api.rubyonrails.org/classes/ActionMailer/Base.html</span><br><span class="line"># gitlab_rails[&apos;smtp_openssl_verify_mode&apos;] = &apos;none&apos;</span><br><span class="line"></span><br><span class="line"># gitlab_rails[&apos;smtp_ca_path&apos;] = &quot;/etc/ssl/certs&quot;</span><br><span class="line"># gitlab_rails[&apos;smtp_ca_file&apos;] = &quot;/etc/ssl/certs/ca-certificates.crt&quot;</span><br><span class="line"></span><br><span class="line">### Email Settings</span><br><span class="line"># gitlab_rails[&apos;gitlab_email_enabled&apos;] = true</span><br><span class="line"># gitlab_rails[&apos;gitlab_email_from&apos;] = &apos;example@example.com&apos;</span><br><span class="line"># gitlab_rails[&apos;gitlab_email_display_name&apos;] = &apos;Example&apos;</span><br><span class="line"># gitlab_rails[&apos;gitlab_email_reply_to&apos;] = &apos;noreply@example.com&apos;</span><br><span class="line"># gitlab_rails[&apos;gitlab_email_subject_suffix&apos;] = &apos;&apos;</span><br><span class="line"># gitlab_rails[&apos;gitlab_email_smime_enabled&apos;] = false</span><br><span class="line"># gitlab_rails[&apos;gitlab_email_smime_key_file&apos;] = &apos;/etc/gitlab/ssl/gitlab_smime.key&apos;</span><br><span class="line"># gitlab_rails[&apos;gitlab_email_smime_cert_file&apos;] = &apos;/etc/gitlab/ssl/gitlab_smime.crt&apos;</span><br></pre></td></tr></table></figure>
+<h3 id="postfix"><a href="#postfix" class="headerlink" title="postfix"></a>postfix</h3><p>可以通过上面安装的postfix来发送邮件，改动设置如下（去掉注释）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">gitlab_rails[&apos;gitlab_email_enabled&apos;] = true </span><br><span class="line">gitlab_rails[&apos;gitlab_email_from&apos;] = &apos;gitlab@http://&lt;服务器地址或域名&gt;&apos; </span><br><span class="line">gitlab_rails[&apos;gitlab_email_display_name&apos;] = &apos;GitLab&apos;</span><br></pre></td></tr></table></figure>
+<p>没有完全尝试，后来考虑还是用其他邮箱较好</p>
+<h3 id="Aliyun个人版"><a href="#Aliyun个人版" class="headerlink" title="Aliyun个人版"></a>Aliyun个人版</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">gitlab_rails[&apos;smtp_enable&apos;] = true</span><br><span class="line">gitlab_rails[&apos;smtp_address&apos;] = &quot;smtp.aliyun.com&quot;</span><br><span class="line">gitlab_rails[&apos;smtp_port&apos;] = 465</span><br><span class="line">gitlab_rails[&apos;smtp_user_name&apos;] = &quot;your username @aliyun.com&quot;</span><br><span class="line">gitlab_rails[&apos;smtp_password&apos;] = &quot;your password&quot;</span><br><span class="line">gitlab_rails[&apos;smtp_domain&apos;] = &quot;aliyun.com&quot;</span><br><span class="line">gitlab_rails[&apos;smtp_authentication&apos;] = &quot;login&quot;</span><br><span class="line">gitlab_rails[&apos;smtp_enable_starttls_auto&apos;] = true</span><br><span class="line">gitlab_rails[&apos;smtp_tls&apos;] = true</span><br><span class="line"></span><br><span class="line">gitlab_rails[&apos;gitlab_email_enabled&apos;] = true</span><br><span class="line">gitlab_rails[&apos;gitlab_email_from&apos;] = &apos;your username @aliyun.com&apos;</span><br><span class="line">gitlab_rails[&apos;gitlab_email_display_name&apos;] = &apos;Gitlab&apos;</span><br><span class="line">gitlab_rails[&apos;gitlab_email_reply_to&apos;] = &apos;your username @aliyun.com&apos;</span><br></pre></td></tr></table></figure>
+<p>这里多个文章提到如果安装了postfix后，再配置smtp服务器无效，但是当前gitlab版本中，我测试后是有效的。</p>
+<p><strong>测试方法</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#进入控制台</span><br><span class="line">gitlab-rails console</span><br><span class="line">#发送测试邮件</span><br><span class="line">Notify.test_email(&apos;收件人邮箱&apos;, &apos;邮件标题&apos;, &apos;邮件正文&apos;).deliver_now</span><br></pre></td></tr></table></figure>
+<p><img alt="测试发信成功" data-src="https://cdn.jsdelivr.net/gh/iSk2y/CDN/blog/post/gitlab-deploy-note/1571554772434.png" class="lozad"></p>
+<h2 id="禁用创建组权限"><a href="#禁用创建组权限" class="headerlink" title="禁用创建组权限"></a>禁用创建组权限</h2><p> GitLab默认所有的注册用户都可以创建组。  通过配置GitLab默认禁用创建组权限 。该权限在用户管理界面可以看到。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#开启gitlab_rails[&apos;gitlab_default_can_create_group&apos;] 选项，并将值设置为false</span><br><span class="line">### GitLab user privileges</span><br><span class="line">gitlab_rails[&apos;gitlab_default_can_create_group&apos;] = false</span><br><span class="line"></span><br><span class="line">#保存后，重新配置并启动GitLab</span><br><span class="line">sudo gitlab-ctl reconfigure</span><br></pre></td></tr></table></figure>
+<h1 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h1><h2 id="Service-Management-Commands"><a href="#Service-Management-Commands" class="headerlink" title="Service Management Commands"></a>Service Management Commands</h2><p>这类命令来管理服务</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">command</th>
+<th style="text-align:left">function</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">start</td>
+<td style="text-align:left">启动所有服务</td>
+</tr>
+<tr>
+<td style="text-align:left">stop</td>
+<td style="text-align:left">关闭所有服务</td>
+</tr>
+<tr>
+<td style="text-align:left">restart</td>
+<td style="text-align:left">重启所有服务</td>
+</tr>
+<tr>
+<td style="text-align:left">status</td>
+<td style="text-align:left">查看所有服务状态</td>
+</tr>
+<tr>
+<td style="text-align:left">tail</td>
+<td style="text-align:left">查看日志信息</td>
+</tr>
+<tr>
+<td style="text-align:left">service-list</td>
+<td style="text-align:left">列举所有启动服务</td>
+</tr>
+<tr>
+<td style="text-align:left">graceful-kill</td>
+<td style="text-align:left">平稳停止一个服务</td>
+</tr>
+</tbody>
+</table>
+<p>举例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#启动所有服务</span></span><br><span class="line">[root@localhost gitlab]<span class="comment"># gitlab-ctl start</span></span><br><span class="line"><span class="comment">#启动单独一个服务</span></span><br><span class="line">[root@localhost gitlab]<span class="comment"># gitlab-ctl start nginx</span></span><br><span class="line"><span class="comment">#查看日志，查看所有日志</span></span><br><span class="line">[root@localhost gitlab]<span class="comment"># gitlab-ctl tail</span></span><br><span class="line"><span class="comment">#查看具体一个服务的日志,类似tail -f</span></span><br><span class="line">[root@localhost gitlab]<span class="comment"># gitlab-ctl tail nginx</span></span><br></pre></td></tr></table></figure>
+<h2 id="General-Commands"><a href="#General-Commands" class="headerlink" title="General Commands"></a>General Commands</h2><p>全局命令</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">command</th>
+<th style="text-align:left">function</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">help</td>
+<td style="text-align:left">帮助</td>
+</tr>
+<tr>
+<td style="text-align:left">reconfigure</td>
+<td style="text-align:left">修改配置文件之后，重新加载</td>
+</tr>
+<tr>
+<td style="text-align:left">show-config</td>
+<td style="text-align:left">查看所有服务配置文件信息</td>
+</tr>
+<tr>
+<td style="text-align:left">uninstall</td>
+<td style="text-align:left">卸载这个软件</td>
+</tr>
+<tr>
+<td style="text-align:left">cleanse</td>
+<td style="text-align:left">清空gitlab数据</td>
+</tr>
+<tr>
+<td style="text-align:left">service-list</td>
+<td style="text-align:left">列举所有启动服务</td>
+</tr>
+<tr>
+<td style="text-align:left">graceful-kill</td>
+<td style="text-align:left">平稳停止一个服务</td>
+</tr>
+</tbody>
+</table>
+<p>举例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#显示所有服务配置文件</span></span><br><span class="line">[root@localhost gitlab]<span class="comment">#gitlab-ctl show-config</span></span><br><span class="line"><span class="comment">#卸载gitlab</span></span><br><span class="line">[root@localhost gitlab]<span class="comment">#gitlab-ctl uninstall</span></span><br></pre></td></tr></table></figure>
+<h2 id="DatabaseCommands"><a href="#DatabaseCommands" class="headerlink" title="DatabaseCommands"></a>DatabaseCommands</h2><p>数据库命令</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">command</th>
+<th style="text-align:left">function</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">pg-upgrade</td>
+<td style="text-align:left">更新postgresql版本</td>
+</tr>
+<tr>
+<td style="text-align:left">revert-pg-upgrade</td>
+<td style="text-align:left">还远先前的(离现在正在使用靠近的版本)一个数据库版本</td>
+</tr>
+<tr>
+<td style="text-align:left">show-config</td>
+<td style="text-align:left">查看所有服务配置文件信息</td>
+</tr>
+<tr>
+<td style="text-align:left">uninstall</td>
+<td style="text-align:left">卸载这个软件</td>
+</tr>
+<tr>
+<td style="text-align:left">cleanse</td>
+<td style="text-align:left">清空gitlab数据</td>
+</tr>
+<tr>
+<td style="text-align:left">service-list</td>
+<td style="text-align:left">列举所有启动服务</td>
+</tr>
+<tr>
+<td style="text-align:left">graceful-kill</td>
+<td style="text-align:left">平稳停止一个服务</td>
+</tr>
+</tbody>
+</table>
+<p>举例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#升级数据库</span></span><br><span class="line">[root@localhost gitlab]<span class="comment"># gitlab-ctl pg-upgrade</span></span><br><span class="line">Checking <span class="keyword">for</span> an omnibus managed postgresql: OK</span><br><span class="line">Checking <span class="keyword">if</span> we already upgraded: OK</span><br><span class="line">The latest version 9.6.1 is already running,nothing to <span class="keyword">do</span></span><br><span class="line"><span class="comment">#降级数据库版本</span></span><br><span class="line">[root@localhost gitlab]<span class="comment"># gitlab-ctl revert-pg-upgrade</span></span><br></pre></td></tr></table></figure>
+<h1 id="过程中的问题"><a href="#过程中的问题" class="headerlink" title="过程中的问题"></a>过程中的问题</h1><h2 id="关于firewall"><a href="#关于firewall" class="headerlink" title="关于firewall"></a>关于firewall</h2><p>在firewall-cmd命令无法找到时，重新通过</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install firewalld</span><br><span class="line"></span><br><span class="line">sudo systemctl start firewalld</span><br><span class="line">sudo systemctl <span class="built_in">enable</span> firewalld</span><br><span class="line">sudo systemctl status firewalld</span><br></pre></td></tr></table></figure>
+<p><img alt="1571540133060" data-src="https://cdn.jsdelivr.net/gh/iSk2y/CDN/blog/post/gitlab-deploy-note/1571540133060.png" class="lozad"></p>
+<p>出现了报错</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ERROR: Exception DBusException: org.freedesktop.DBus.Error.AccessDenied: Connection &quot;:1.24&quot; is not allowed to own the service &quot;org.fedoraproject.FirewallD1&quot; due to security policies in the configuration file</span><br></pre></td></tr></table></figure>
+<p>但是在启动时出现了问题，思考搜索一番答案后在，stackoverflow上找到了这个<a href="https://stackoverflow.com/questions/31397121/centos7-firewall-not-running" target="_blank" rel="noopener">解决方案</a></p>
+<blockquote>
+<p> More recently, <a href="https://bugzilla.redhat.com/show_bug.cgi?id=1575845" target="_blank" rel="noopener">Bug 1575845</a> in Red Hat’s Bugzilla tracker shows a problem in RHEL/CentOS 7.3 or later that triggers this issue. Something with dbus policy not being passed correctly. The permanent fix (for now) could be upgrading your base image to a newer version of RHEL/CentOS. </p>
+<p>However, these commands should also work, per this comment in the Bugzilla:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; sudo systemctl restart dbus</span><br><span class="line">&gt; sudo systemctl restart firewalld</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h2 id="发信失败"><a href="#发信失败" class="headerlink" title="发信失败"></a>发信失败</h2><p>在使用smtp发信时，发信失败，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gitlab_rails[&apos;smtp_enable_starttls_auto&apos;] = true</span><br><span class="line">gitlab_rails[&apos;smtp_tls&apos;] = true</span><br></pre></td></tr></table></figure>
+<p>这两个属性关注下，是否到底用了ssl加密，同时注意端口配置。</p>
+<p>如果不行，尝试看日志信息解决</p>
+<h2 id="文档-amp-参考"><a href="#文档-amp-参考" class="headerlink" title="文档&amp;参考"></a>文档&amp;参考</h2><ul>
+<li>官方安装： <a href="https://about.gitlab.com/install/#centos-7" target="_blank" rel="noopener">https://about.gitlab.com/install/#centos-7</a> </li>
+<li>官方manual_install： <a href="https://docs.gitlab.com/omnibus/manual_install.html" target="_blank" rel="noopener">https://docs.gitlab.com/omnibus/manual_install.html</a> </li>
+<li><a href="https://www.jianshu.com/p/dbb4543bdd8e" target="_blank" rel="noopener">Centos 安装GitLab（从零开始配置）</a>  </li>
+<li><a href="https://www.jianshu.com/p/2ff7c00f3ab6" target="_blank" rel="noopener">Gitlab本地部署安装配置</a></li>
+<li><a href="https://ken.io/note/centos7-gitlab-install-tutorial" target="_blank" rel="noopener">CentOS 7 下 GitLab安装部署教程</a></li>
+</ul>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">iSk2y</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://isk2y.github.io/2019/10/20/内网Gitlab部署小记/">http://isk2y.github.io/2019/10/20/内网Gitlab部署小记/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://isk2y.github.io">iSk2y's Note</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Git/">Git    </a><a class="post-meta__tags" href="/tags/运维/">运维    </a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/iSk2y/CDN/blog/post/gitlab-deploy-note/gitlab_cover.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js@1.0.16/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js@1.0.16/dist/js/social-share.min.js"></script></div></div><nav class="pagination_post" id="pagination"><div class="next-post pull-full"><a href="/2019/05/13/letsencrypt-application-renew/"><img class="next_cover lozad" data-src="https://cdn.jsdelivr.net/gh/iSk2y/CDN/blog/img/default_bg.png" onerror="onerror=null;src='/img/404.jpg'"><div class="label">下一篇</div><div class="next_info"><span>申请Let's encrypt的SSL证书</span></div></a></div></nav><hr><div id="post-comment"><div class="comment_headling"><i class="fa fa-comments fa-fw" aria-hidden="true"></i><span> 评论</span></div><div id="gitalk-container"></div><script>var gitalk = new Gitalk({
+  clientID: '5b59f0769ce0bc7e7559',
+  clientSecret: 'b75a1a70e7a34193ea434785fe07eaecafd86442',
+  repo: 'BlogComments',
+  owner: 'iSk2y',
+  admin: 'iSk2y',
+  id: md5(decodeURI(location.pathname)),
+  language: ''
+})
+gitalk.render('gitalk-container')</script></div></div></div><footer><div id="footer"><div class="copyright">&copy;2018 - 2019 By iSk2y</div><div class="framework-info"><span>驱动 </span><a href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>主题 </span><a href="https://github.com/jerryc127/hexo-theme-butterfly"><span>Butterfly</span></a></div></div></footer></div><section class="rightside" id="rightside"><div id="rightside-config-hide"><i class="fa fa-book" id="readmode" title="阅读模式"></i><i class="fa fa-plus" id="font_plus" title="放大字体"></i><i class="fa fa-minus" id="font_minus" title="缩小字体"></i><a class="translate_chn_to_cht" id="translateLink" href="javascript:translatePage();" title="简繁转换">简</a><i class="nightshift fa fa-moon-o" id="nightshift" title="夜间模式"></i></div><div id="rightside-config-show"><div id="rightside_config" title="设置"><i class="fa fa-cog" aria-hidden="true"></i></div><a id="to_comment" href="#post-comment" title="直达评论"><i class="scroll_to_comment fa fa-comments">  </i></a><i class="fa fa-list-ul close" id="mobile-toc-button" title="目录" aria-hidden="true"></i><i class="fa fa-arrow-up" id="go-up" title="回到顶部" aria-hidden="true"></i></div></section><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/nightshift.js"></script><script src="/js/tw_cn.js"></script><script>translateInitilization()
+
+</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@1.2.2/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script><script>const observer = lozad(); // lazy loads elements with default selector as '.lozad'
+observer.observe();
+</script></body></html>
